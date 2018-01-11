@@ -2,7 +2,12 @@ import pandas as pd
 import mlxtend
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.linear_model import Lasso, LinearRegression
+
+from sklearn.svm import SVR
+from sklearn.linear_model import Lasso, LinearRegression, ElasticNet, Ridge
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.datasets import make_regression
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.feature_selection import VarianceThreshold
@@ -122,6 +127,80 @@ class RegressionModel:
 		print 'Variance score: %.2f' % r2_score(self.y_test, self.y_pred)
 		# print "Linear model:", self.pretty_print_linear(self.regr.coef_)
 		# print self.y_pred
+
+	def lasso_model(self, alpha):
+		# alpha = 0.1
+		lasso = Lasso(alpha=alpha)
+
+		y_pred_lasso = lasso.fit(self.X_train, self.y_train).predict(self.X_test)
+		r2_score_lasso = r2_score(y_test, y_pred_lasso)
+		print lasso
+		print "r^2 on test data : %f" % r2_score_lasso
+
+	def elasticNet_model(self, alpha, l1_ratio):
+		# enet = ElasticNet(alpha=alpha, l1_ratio=0.7)
+		enet = ElasticNet(alpha=alpha, l1_ratio=l1_ratio)
+
+		y_pred_enet = enet.fit(self.X_train, self.y_train).predict(self.X_test)
+		r2_score_enet = r2_score(self.y_test, y_pred_enet)
+		print enet
+		print "r^2 on test data : %f" % r2_score_enet
+
+	def ridge_model(self, alpha):
+		# reg = Ridge(alpha = .5)
+		reg = Ridge(alpha=alpha)
+		reg.fit(self.X_train, self.y_train) 
+		print "feature importance: ", regr.feature_importances_ 
+		y_pred = reg.predict(self.X_test)
+		print reg.coef_
+		print reg.intercept_ 
+		r2_score = r2_score(self.y_test, y_pred)
+		print "r^2 on test data : %f" % r2_score
+
+	def svr(self, type, **kargs):
+		# #############################################################################
+		# Fit regression model
+		# svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
+		# svr_lin = SVR(kernel='linear', C=1e3)
+		# svr_poly = SVR(kernel='poly', C=1e3, degree=2)
+		C = kargs.get('C', le3)
+		if type == "rbf":
+			gamma = kargs.get('gamma', 0.1)
+			svr = SVR(kernel='rbf', C=C, gamma=gamma)
+		elif type == "linear":
+			svr = SVR(kernel='linear', C=C)
+		elif type == "poly":
+			degree = kargs.get('degree', 2)
+			svr = SVR(kernel='poly', C=C, degree=degree)
+
+		y_pred = svr.fit(self.X_train, self.y_train).predict(self.X_test)
+		print "feature importance: ", svr.feature_importances_ 
+		r2_score = r2_score(self.y_test, y_pred)
+
+		print "r^2 on test data : %f" % r2_score
+
+
+	def decisionTreeRegressor(self, max_depth):
+		# Fit regression model
+		regr = DecisionTreeRegressor(max_depth=max_depth)
+		regr.fit(self.X_train, self.y_train)
+		print "feature importance: ", regr.feature_importances_ 
+		# Predict
+		y_pred = regr.predict(self.X_test)
+		r2_score = r2_score(self.y_test, y_pred)
+
+		print "r^2 on test data : %f" % r2_score
+
+	def randonForestRegressor(self, max_depth, random_state):
+		regr = RandomForestRegressor(max_depth=max_depth, random_state=random_state)
+		regr.fit(self.X_train, self.y_train)
+		print "feature importance: ", regr.feature_importances_ 
+		y_pred = regr.predict(self.X_test) 
+		print y_pred
+		r2_score = r2_score(self.y_test, y_pred)
+		print "r^2 on test data : %f" % r2_score
+
+
 
 if __name__ == '__main__':
 	# call data 
