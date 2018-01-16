@@ -28,7 +28,7 @@ class HousePrice():
     def grid_search(self, cv, **params):
         # To find best parameter for GradientBoostingRegressor, do GridSearch with parameters' dictionary
         gs = GridSearchCV(ensemble.GradientBoostingRegressor(min_samples_split=2, loss='ls'), params, cv=cv)
-        gs.fit(self.X, self.y)
+        gs.fit(self.X_train, self.y_train)
         print "**************************************"
         print "GradientBoost BEST PARAMS:", gs.best_params_
 
@@ -95,8 +95,8 @@ if __name__ == "__main__":
     y_name = 'MEDV'
     # set training data ratio in whole data
     train_ratio = 0.9
-    # feature_importance_list = ['RM', 'LSTAT', 'DIS', 'PTRATIO', 'NOX', 'AGE', 'CRIM', 'INDUS',  'ZN']
-    feature_importance_list = ['CRIM', 'NOX', 'RM', 'AGE', 'DIS', 'TAX', 'PTRATIO', 'B', 'LSTAT', 'INDUS', 'RAD','CHAS']
+    feature_importance_list = ['CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 'AGE', 'DIS', 'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT']
+    # feature_importance_list = ['CRIM', 'NOX', 'RM', 'AGE', 'DIS', 'TAX', 'PTRATIO', 'B', 'LSTAT', 'INDUS', 'RAD','CHAS']
     house = HousePrice(data_file, column_list, y_name, feature_importance_list, train_ratio)
 
     # grid search with gradientboostregression
